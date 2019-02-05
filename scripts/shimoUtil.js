@@ -1,8 +1,12 @@
+const id = require('./identifier.js');
+
 async function webClipper(request) {
+    console.log('正在进行webClipper页面剪藏..');
     const TurndownService = require('turndown');
     const http = require('request');
     const cheerio = require('cheerio');
-    var read = require('node-readability');
+    const read = require('node-readability');
+
 
     var url = request.params.url;
 
@@ -16,6 +20,8 @@ async function webClipper(request) {
             article.realTitle = $("title").text();//通过这种方式获得的标题才是最准确的标题
 
             var content = article.content.toString();
+
+            console.log(content);
 
             content = content.replace(/data-src/gm, 'src');//微信公众号的文章图片的src会写成data-src,因此turndown并不能识别这个label,进而会错误地砍掉图片部分
 
@@ -60,8 +66,19 @@ async function webClipper(request) {
     });
 }
 
-webClipper({ params: { url: 'https://news.163.com/19/0205/01/E77BQSGV0001875P.html' } });
+
 
 module.exports = {
     webClipper: webClipper
 }
+
+id.run({
+    rules: 'vscode',
+    func: () => {
+        webClipper({
+            params: {
+                url: 'http://data.163.com/18/1222/01/E3JHUBU0000181IU.html'
+            }
+        })
+    }
+}) 
